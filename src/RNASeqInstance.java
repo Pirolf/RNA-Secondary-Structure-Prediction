@@ -28,7 +28,6 @@ public class RNASeqInstance {
 			for(int j = 1; j < seqMatrix.length - i - 4; j++){
 				if(seq.charAt(i) == seq.charAt(j)){
 					seqMatrix[i][j] = seqMatrix[i-1][j-1];
-					//TODO: store the info
 					//check 
 					if(currPalin == null){
 						currPalin = new RNAPalindrome(j, seqMatrix.length - i);
