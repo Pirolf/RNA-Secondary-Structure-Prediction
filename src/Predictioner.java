@@ -36,13 +36,19 @@ public class Predictioner {
 	 * @param bracket
 	 * @return
 	 */
-	public static LinkedList<RNAPalindrome> bracketToPalin(String bracket){
+	public static LinkedList<RNAPalindrome> bracketToPalin(String bracket, int matchingLength){
 		int bracketLength = bracket.length();
 		RNAPalindrome currPalin = null;
 		//same trick: find palindromes->NO
 		//char[][] bracketMatrix = new char[bracketLength][bracketLength];
 		char currChar = ' ';
 		//find farthest matching parens
+		for(int i = 0; i < bracket.length(); i++){
+			currChar = bracket.charAt(i);
+			if(currChar == '('){
+				int contiLParenLength = continuousParenLength('(', bracket);
+			}
+		}
 		//call recursively on substring
 		//base case: substring length < 4
 		return null;
@@ -61,6 +67,21 @@ public class Predictioner {
 			}
 		}
 		return revBracket;
+	}
+	
+	public static int continuousParenLength(char paren, String str){
+		char currChar = ' ';
+		int currPos = 1;
+		int contiLength = 1;
+		while(currPos < str.length()){
+			currChar = str.charAt(currPos);
+			if(currChar == paren){
+				contiLength++;
+			}else{
+				return contiLength;
+			}
+		}
+		return contiLength;
 	}
 
 }
