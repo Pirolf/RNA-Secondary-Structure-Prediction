@@ -39,8 +39,12 @@ public class Predictioner {
 	public static LinkedList<RNAPalindrome> bracketToPalin(String bracket){
 		int bracketLength = bracket.length();
 		RNAPalindrome currPalin = null;
-		//same trick: find palindromes
-		char[][] bracketMatrix = new char[bracketLength][bracketLength];
+		//same trick: find palindromes->NO
+		//char[][] bracketMatrix = new char[bracketLength][bracketLength];
+		char currChar = ' ';
+		//find farthest matching parens
+		//call recursively on substring
+		//base case: substring length < 4
 		return null;
 	}
 	
