@@ -13,6 +13,7 @@ public class Predictioner {
 			s = new Scanner(rnaSeqFile);
 			if(s.hasNextLine()){
 				rnaSeq = s.nextLine();
+				//run prediction
 				RNASeqInstance seqInstance = new RNASeqInstance(rnaSeq.length(), rnaSeq);
 			}
 		}catch(IOException e){

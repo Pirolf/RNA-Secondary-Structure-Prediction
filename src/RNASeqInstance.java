@@ -1,17 +1,11 @@
 import java.util.LinkedList;
 //import java.sql.*;
 public class RNASeqInstance {
-	public static final char GAP = 'e';
-
-	private int instanceID;
-	private int instanceOrder;
 	private int seqLength;
 	private String seq;
 	public int[][] seqMatrix;
 	private LinkedList<RNAPalindrome> palinSeq;
-	public RNASeqInstance(int instanceID, int instanceOrder, int seqLength, String seq){
-		this.instanceID = instanceID;
-		this.instanceOrder = instanceOrder;
+	public RNASeqInstance(int seqLength, String seq){
 		this.seqLength = seqLength;
 		this.seq = seq;
 		seqMatrix = new int[seqLength + 1][seqLength + 1];
@@ -37,11 +31,11 @@ public class RNASeqInstance {
 					//TODO: store the info
 					//check 
 					if(currPalin == null){
-						currPalin = new RNAPalindrome(j, seqMatrix.length - i, instanceID);
+						currPalin = new RNAPalindrome(j, seqMatrix.length - i);
 					}else{
 						if(currPalin.getEndPos() != 0){
 							//already ended
-							currPalin = new RNAPalindrome(j, seqMatrix.length - i, instanceID);
+							currPalin = new RNAPalindrome(j, seqMatrix.length - i);
 						}else{
 							currPalin.setTmpEndPos(j);
 						}				
@@ -68,7 +62,6 @@ public class RNASeqInstance {
 	public LinkedList<RNAPalindrome> getPalinList(){
 		return palinSeq;
 	}
-
 	/**
 	 * Reverses an RNA seq
 	 * @return
@@ -79,8 +72,8 @@ public class RNASeqInstance {
 		for(int i = seq.length() - 1; i >= 0; i--){
 			char currChar = seq.charAt(i);
 			switch(currChar){
-			case 'A': reverse += 'T';break;
-			case 'T': reverse += 'A';break;
+			case 'A': reverse += 'U';break;
+			case 'U': reverse += 'A';break;
 			case 'G': reverse += 'C';break;
 			case 'C': reverse += 'G';break;
 			default:break;

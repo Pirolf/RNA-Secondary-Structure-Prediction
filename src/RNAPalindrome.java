@@ -9,16 +9,14 @@ public class RNAPalindrome {
 	private int endPos;
 	private int endMatch;
 	private int length;
-	private int seqID;
 	private int hashPalin;
-	public RNAPalindrome(int startPos, int startMatch, int seqID){
+	public RNAPalindrome(int startPos, int startMatch){
 		this.startPos = startPos;
 		this.startMatch = startMatch;
 		this.tmpEndPos = startMatch;
 		this.endPos = 0;
 		this.endMatch = 0;
 		length = 0;
-		this.seqID = seqID;
 	}
 	public void hash(){
 		hashPalin = (startPos + ", " + startMatch).hashCode();
