@@ -28,32 +28,39 @@ public class Predictioner {
 			s.close();
 			sbracket.close();
 		}
-		
+
 
 	}
 	/**
 	 * Convert secondary structures from bracket to RNAPalin
+	 * Duplicate stems are also produced, but as long as we can find a match, then it's ok
+	 * or we can remove duplicates afterwards (eg. remove (4, 8) from (3, 9))
 	 * @param bracket
+	 * @param startSub: starting left paren's position in original string
+	 * @param posOffset:  position of this char in the original sequence
 	 * @return
 	 */
-	public static LinkedList<RNAPalindrome> bracketToPalin(String bracket, int matchingLength){
-		int bracketLength = bracket.length();
-		RNAPalindrome currPalin = null;
-		//same trick: find palindromes->NO
-		//char[][] bracketMatrix = new char[bracketLength][bracketLength];
-		char currChar = ' ';
-		//find farthest matching parens
-		for(int i = 0; i < bracket.length(); i++){
-			currChar = bracket.charAt(i);
-			if(currChar == '('){
-				int contiLParenLength = continuousParenLength('(', bracket);
-			}
+	public static int posOffset = 0; 
+	public static LinkedList<RNAPalindrome> bracketToPalin(LinkedList<RNAPalindrome> rp, String bracket,
+			int startSub){
+		char currChar = bracket.charAt(0);
+		if(currChar == '('){
+			startSub = posOffset;//start from current position of (
+			posOffset ++;
+			bracketToPalin(rp, bracket.substring(posOffset), startSub);	
+		}else if(currChar == '.'){
+			posOffset ++;
+		}else{
+			// ')'  ......((...(((....))).....))... 
+			//calc positions, and add palindrome to the list
+			int endPos =  posOffset;
+			rp.add(new RNAPalindrome(startSub, endPos, true));
+			posOffset++;
+			return rp;
 		}
-		//call recursively on substring
-		//base case: substring length < 4
-		return null;
+		return rp;
 	}
-	
+
 	public static String revBracket(String originalBracket){
 		String revBracket = "";
 		for(int i = 0; i < originalBracket.length(); i++){
@@ -68,7 +75,7 @@ public class Predictioner {
 		}
 		return revBracket;
 	}
-	
+
 	public static int continuousParenLength(char paren, String str){
 		char currChar = ' ';
 		int currPos = 1;

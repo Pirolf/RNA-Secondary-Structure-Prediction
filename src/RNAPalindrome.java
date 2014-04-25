@@ -18,6 +18,16 @@ public class RNAPalindrome {
 		this.endMatch = 0;
 		length = 0;
 	}
+	/**
+	 * for the bracket file
+	 * @param startPos
+	 * @param endPos
+	 * @param ended
+	 */
+	public RNAPalindrome(int startPos, int endPos, boolean ended){
+		this.startPos = startPos;
+		this.endPos = endPos;
+	}
 	public void hash(){
 		hashPalin = (startPos + ", " + startMatch).hashCode();
 	}
