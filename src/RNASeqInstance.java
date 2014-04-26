@@ -6,6 +6,7 @@ public class RNASeqInstance {
 	public int[][] seqMatrix;
 	private LinkedList<RNAPalindrome> palinSeq;
 	public RNASeqInstance(int seqLength, String seq){
+		palinSeq = new LinkedList<RNAPalindrome>();
 		this.seqLength = seqLength;
 		this.seq = seq;
 		seqMatrix = new int[seqLength + 1][seqLength + 1];
@@ -26,15 +27,15 @@ public class RNASeqInstance {
 			//length - i - 4 >= 2
 			//length - i - 4 >= j
 			for(int j = 1; j < seqMatrix.length - i - 4; j++){
-				if(seq.charAt(i) == seq.charAt(j)){
+				if(revSeq.charAt(i) == seq.charAt(j)){
 					seqMatrix[i][j] = seqMatrix[i-1][j-1];
 					//check 
 					if(currPalin == null){
-						currPalin = new RNAPalindrome(j, seqMatrix.length - i);
+						currPalin = new RNAPalindrome(j, seqMatrix.length - i + 1);
 					}else{
 						if(currPalin.getEndPos() != 0){
 							//already ended
-							currPalin = new RNAPalindrome(j, seqMatrix.length - i);
+							
 						}else{
 							currPalin.setTmpEndPos(j);
 						}				
@@ -43,6 +44,7 @@ public class RNASeqInstance {
 					if(currPalin != null){
 						if(currPalin.getTmpEndPos() == j - 1 && currPalin.getEndPos() == 0){
 							currPalin.setEnds(j, seqMatrix.length - i);
+							currPalin = new RNAPalindrome(j, seqMatrix.length - i + 1);
 							palinSeq.add(currPalin);
 						}
 					}

@@ -29,8 +29,8 @@ public class RNAPalindrome {
 		this.startPos = startPos;
 		this.endPos = endPos;
 	}
-	public void hash(){
-		hashPalin = (startPos + ", " + startMatch).hashCode();
+	public int getStartMatch(){
+		return startMatch;
 	}
 	public void setTmpEndPos(int tmp){
 		this.tmpEndPos = tmp;

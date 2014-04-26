@@ -18,10 +18,24 @@ public class Predictioner {
 			sbracket = new Scanner(rnaSecStructFile);
 			if(s.hasNextLine()){
 				rnaSeq = s.nextLine();
+				System.out.println(rnaSeq.length());
 				//run prediction
-				//RNASeqInstance seqInstance = new RNASeqInstance(rnaSeq.length(), rnaSeq);
+				RNASeqInstance seqInstance = new RNASeqInstance(rnaSeq.length(), rnaSeq);
 				//get prediction result
-				//LinkedList<RNAPalindrome> predResult = seqInstance.getPalinList();
+				LinkedList<RNAPalindrome> predResult = seqInstance.getPalinList();
+				System.out.println(predResult.size());
+				
+				for(int i = 0; i < 100; i++){
+					int start = predResult.get(i).getStartPos();
+					int end = predResult.get(i).getEndPos();
+					if(end - start > 4){
+						System.out.print("(" + start + ", " + end + ")");
+						//System.out.println(rnaSeq.substring(start, end+1));
+					}
+				}
+				
+				
+				
 				while(sbracket.hasNextLine()){
 					bracketStr += sbracket.nextLine();
 				}
