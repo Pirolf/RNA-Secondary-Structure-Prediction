@@ -10,6 +10,7 @@ public class RNAPalindrome {
 	private int endMatch;
 	private int length;
 	private int hashPalin;
+	private boolean belongsToStemLoop = true;
 	public RNAPalindrome(int startPos, int startMatch){
 		this.startPos = startPos;
 		this.startMatch = startMatch;
@@ -34,6 +35,12 @@ public class RNAPalindrome {
 	public void setTmpEndPos(int tmp){
 		this.tmpEndPos = tmp;
 	}
+	public boolean getBelongsToStemLoop(){
+		return belongsToStemLoop;
+	}
+	public void setBelongsToStemLoop(boolean sl){
+		belongsToStemLoop = sl;
+	}
 	public int getTmpEndPos(){
 		return this.tmpEndPos;
 	}
@@ -43,6 +50,13 @@ public class RNAPalindrome {
 	}
 	public int getEndPos(){
 		return this.endPos;
+	}
+	public int getStartPos(){
+		return this.startPos;
+	}
+	
+	public void printPalin(){
+		System.out.print("(" + startPos + ", " + endPos + ")");
 	}
 	
 }
