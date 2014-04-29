@@ -17,14 +17,11 @@ public class RNASeqInstance {
 		 * 
 		 * 
 		 */
+		//Init matrix
 		for(int i = 0; i < predMatrix.length; i++){
 			for(int j = 0; j < predMatrix.length; j++){
-				
-					predMatrix[i][j] = new BaseCell(i, j, 0);
-
+				predMatrix[i][j] = new BaseCell(i, j, 0);
 			}
-
-
 		}
 		for(int i= 0; i < predMatrix.length - 1; i++){
 			for(int j = 0; j < predMatrix.length - i - 1; j++){
