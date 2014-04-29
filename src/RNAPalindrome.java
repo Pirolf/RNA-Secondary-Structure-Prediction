@@ -1,23 +1,18 @@
 
 public class RNAPalindrome {
-	//... C           G            G     ...      C        C        G...
+	//... (C           G            G)    ...      (C        C        G)...
 	//....startPos    tmpEndPos   endPos        endMatch          startMatch
 	//HASH: startPos, startMatch
 	private int startPos;
 	private int startMatch;
 	private int tmpEndPos;
 	private int endPos;
-	private int endMatch;
-	private int length;
-	private int hashPalin;
 	private boolean belongsToStemLoop = true;
 	public RNAPalindrome(int startPos, int startMatch){
 		this.startPos = startPos;
 		this.startMatch = startMatch;
 		this.tmpEndPos = startMatch;
 		this.endPos = 0;
-		this.endMatch = 0;
-		length = 0;
 	}
 	/**
 	 * for the bracket file
@@ -44,9 +39,9 @@ public class RNAPalindrome {
 	public int getTmpEndPos(){
 		return this.tmpEndPos;
 	}
-	public void setEnds(int endPos, int endMatch){
-		this.endPos = endPos;
-		this.endMatch = endMatch;
+	public void setEnds(int startPos, int startMatch){
+		this.startPos = startPos;
+		this.startMatch = startMatch;
 	}
 	public int getEndPos(){
 		return this.endPos;
