@@ -1,62 +1,68 @@
+import java.util.Iterator;
 import java.util.LinkedList;
 //import java.sql.*;
 public class RNASeqInstance {
-	private int seqLength;
 	private String seq;
-	public int[][] seqMatrix;
+	public BaseCell[][] predMatrix;
 	private LinkedList<RNAPalindrome> palinSeq;
 	public RNASeqInstance(int seqLength, String seq){
 		palinSeq = new LinkedList<RNAPalindrome>();
-		this.seqLength = seqLength;
 		this.seq = seq;
-		seqMatrix = new int[seqLength + 1][seqLength + 1];
+		predMatrix = new BaseCell[seqLength][seqLength];
 		String revSeq = reverseSeq(seq);
-		//init matrix: row for original seq, column for rev
-		for(int i = 0; i < seqMatrix.length; i++){
-			seqMatrix[i][0] = i;
-			seqMatrix[0][i] = i;
-		}
+
 		/**
 		 * 	A T T C G T A A C C T T G C T A C
 		 * 
 		 * 
 		 * 
 		 */
-		RNAPalindrome currPalin = null;
-		for(int i = 1; i < seqMatrix.length - 4 - 2; i++){//4: no sharp turn, 
-			//length - i - 4 >= 2
-			//length - i - 4 >= j
-			for(int j = 1; j < seqMatrix.length - i - 4; j++){
-				if(revSeq.charAt(i) == seq.charAt(j)){
-					seqMatrix[i][j] = seqMatrix[i-1][j-1];
-					//check 
-					if(currPalin == null){
-						currPalin = new RNAPalindrome(j, seqMatrix.length - i + 1);
-					}else{
-						if(currPalin.getEndPos() != 0){
-							//already ended
-							
-						}else{
-							currPalin.setTmpEndPos(j);
-						}				
-					}
-				}else{
-					if(currPalin != null){
-						if(currPalin.getTmpEndPos() == j - 1 && currPalin.getEndPos() == 0){
-							currPalin.setEnds(j, seqMatrix.length - i);
-							currPalin = new RNAPalindrome(j, seqMatrix.length - i + 1);
-							palinSeq.add(currPalin);
-						}
-					}
-					if(seqMatrix[i-1][j-1] < seqMatrix[i-1][j] 
-							&& seqMatrix[i-1][j-1] < seqMatrix[i][j-1]){
-						seqMatrix[i][j] = seqMatrix[i-1][j-1] + 1;
-					}else{
-						seqMatrix[i][j] = Math.min(seqMatrix[i-1][j], seqMatrix[i][j-1]);
-					}
-				}
+		for(int i = 0; i < predMatrix.length; i++){
+			for(int j = 0; j < predMatrix.length; j++){
+				
+					predMatrix[i][j] = new BaseCell(i, j, 0);
+
 			}
 
+
+		}
+		for(int i= 0; i < predMatrix.length - 1; i++){
+			for(int j = 0; j < predMatrix.length - i - 1; j++){
+				BaseCell currBaseCell = predMatrix[i][j];
+				if(getOpposite(revSeq.charAt(i)) == seq.charAt(j)){
+					(predMatrix[i][j]).setHead();
+					if(i >= 1 && j >= 1){
+						BaseCell leftTop = predMatrix[i-1][j-1];
+						if(leftTop.checkHead()){
+							currBaseCell.linkHead(leftTop);
+						}
+					}
+					//so we will have head<-head<-head
+					//if a cell is head but its head is null, than this cell is the start of the sec struct
+					//then we can get its tail as the ending position
+
+				}else{
+					if(i >= 1 && j >= 1){
+						BaseCell leftTop = predMatrix[i-1][j-1];
+						int currRow = i-1;
+						boolean linking = true;
+						BaseCell currNode = leftTop;
+						while(currRow >= 1 && linking){					
+							if(currNode.getHead() == null){
+								linking = false;
+							}else{
+								currNode = currNode.getHead();
+								currRow --;
+							}						
+						}
+						if(currRow < i - 1){
+							currNode.linkTail(leftTop);
+						}
+					}
+
+				}			
+
+			}
 		}
 	}
 
@@ -72,16 +78,54 @@ public class RNASeqInstance {
 		String reverse = "";
 		for(int i = seq.length() - 1; i >= 0; i--){
 			char currChar = seq.charAt(i);
-			switch(currChar){
-			case 'A': reverse += 'U';break;
-			case 'U': reverse += 'A';break;
-			case 'G': reverse += 'C';break;
-			case 'C': reverse += 'G';break;
-			default:break;
-			}
-
+			reverse += currChar;
 		}
 		return reverse;
 	}
+
+	public static char getOpposite(char c){
+		switch(c){
+		case 'A': return 'U';
+		case 'U': return 'A';
+		case 'G': return 'C';
+		case 'C': return 'G';
+		default:return 'A';
+		}
+	}
+
+	public void findPredResult(){
+		for(int i = 0; i < predMatrix.length; i++){
+			for(int j = 0; j < predMatrix.length - i - 1; j++){
+				BaseCell currCell = predMatrix[i][j];
+				if(currCell == null){
+					System.out.println("currCell at "+ i + ", " + j + " is null");
+				}
+				if(currCell != null){
+					//System.out.println("currCell at "+ i + ", " + j + " is not null");
+					if(currCell.getTail() != null){
+						int start = currCell.getCol();
+						int end = predMatrix.length - 1 - currCell.getRow();
+						RNAPalindrome secStruct = new RNAPalindrome(start, end);
+						palinSeq.add(secStruct);
+					}
+				}
+
+			}
+		}
+	}
+	public void printAllSecStruct(){
+		Iterator<RNAPalindrome> itr = palinSeq.iterator();
+		int counter = 0;
+		while(itr.hasNext()){
+			RNAPalindrome currPalin = itr.next();
+			int start = currPalin.getStartPos();
+			int end = currPalin.getStartMatch();
+			counter ++;
+			System.out.println("(" + start + ", " + end + ")" + ": " + seq.substring(start, end + 1));
+
+		}
+		System.out.println("Total predicted secondary structures: " + palinSeq.size());
+	}
+
 
 }
