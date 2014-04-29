@@ -21,18 +21,8 @@ public class Predictioner {
 				System.out.println(rnaSeq.length());
 				//run prediction
 				RNASeqInstance seqInstance = new RNASeqInstance(rnaSeq.length(), rnaSeq);
-				//get prediction result
-				LinkedList<RNAPalindrome> predResult = seqInstance.getPalinList();
-				System.out.println(predResult.size());
-				
-				for(int i = 0; i < 100; i++){
-					int start = predResult.get(i).getStartPos();
-					int end = predResult.get(i).getEndPos();
-					if(end - start > 4){
-						System.out.print("(" + start + ", " + end + ")");
-						//System.out.println(rnaSeq.substring(start, end+1));
-					}
-				}
+				seqInstance.findPredResult();
+				seqInstance.printAllSecStruct();
 				
 				
 				
@@ -41,10 +31,7 @@ public class Predictioner {
 				}
 			
 				bracketStr = "((((....))).(..)).(.)";
-				/*
-				LinkedList<RNAPalindrome> palinsOfBracket 
-				= bracketToPalin(new LinkedList<RNAPalindrome>(), bracketStr, bracketStr, 0, 0);
-				*/
+
 				LinkedList<RNAPalindrome> palinsOfBracket = new LinkedList<RNAPalindrome>();
 				RNAPalindrome p1 = new RNAPalindrome(1, 8, true);
 				RNAPalindrome p2 = new RNAPalindrome(2, 7, true);
@@ -85,6 +72,7 @@ public class Predictioner {
 
 	}
 	/**
+	 * TODO: have issues here
 	 * Convert secondary structures from bracket to RNAPalin
 	 * Duplicate stems are also produced,
 	 * we can remove duplicates afterwards (eg. merge (4, 8) and (3, 11) by using distance)
@@ -215,85 +203,6 @@ public class Predictioner {
 		return stemLoopList;
 	}
 
-	/**
-	 * removes a single enclosing pair like the inner () of (...(....).)
-	 * @param rp
-	 * @param bracket
-	 * @param singleParenPair
-	 */
-	/*	
-    public void removeChildParenPair(LinkedList<RNAPalindrome> rp, String bracket, RNAPalindrome singleParenPair){	
-    	int start = singleParenPair.getStartPos();
-    	int end = singleParenPair.getEndPos();
-    	boolean leftFound = false;
-    	boolean rightFound = false;
-    	boolean hasEnclosingPair = true;
-    	int firstLeft = -1;
-    	int firstRight = -1;
-    	//search for the first left paren 	
-    	for(int i = start - 1; i >= 0 && !leftFound && hasEnclosingPair; i--){
-    		if(bracket.charAt(i) == '('){
-    			firstLeft = i;
-    			leftFound = true;
-    		}else if(bracket.charAt(i) == ')'){
-    			hasEnclosingPair = false;
-    		}
-    	}
-    	//search for the first right paren
-    	if(leftFound && hasEnclosingPair && firstLeft != -1){
-    		for(int j = end + 1; j < bracket.length() && !rightFound && hasEnclosingPair; j++){
-    			if(bracket.charAt(j) == ')'){
-    				firstRight = j;
-    				rightFound = true;
-    			}else if(bracket.charAt(j) == '('){
-    				hasEnclosingPair = false;
-    			}
-    		}
-    	}
-    	//issues: (...(....)..(....)..)
-    	if(firstLeft != -1 && firstRight != -1 && hasEnclosingPair){
-    		Iterator<RNAPalindrome> itr = rp.iterator();
-    		while(itr.hasNext()){
-    			RNAPalindrome curr = itr.next();
-    			if(curr.getStartPos() == firstLeft && curr.getEndPos() == firstRight){
-    				rp.remove(singleParenPair);
-    			}
-    		}
-    	}
 
-    }
-	 */
-	/*
-	public static String revBracket(String originalBracket){
-		String revBracket = "";
-		for(int i = 0; i < originalBracket.length(); i++){
-			char currChar = originalBracket.charAt(i);
-			if(currChar == '('){
-				revBracket += ")";
-			}else if(currChar == ')'){
-				revBracket += "(";
-			}else if(currChar == '.'){
-				revBracket += ".";
-			}
-		}
-		return revBracket;
-	}
-	 */
-	/*
-	public static int continuousParenLength(char paren, String str){
-		char currChar = ' ';
-		int currPos = 1;
-		int contiLength = 1;
-		while(currPos < str.length()){
-			currChar = str.charAt(currPos);
-			if(currChar == paren){
-				contiLength++;
-			}else{
-				return contiLength;
-			}
-		}
-		return contiLength;
-	}
-	 */
 
 }
