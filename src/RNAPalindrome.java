@@ -20,9 +20,9 @@ public class RNAPalindrome {
 	 * @param endPos
 	 * @param ended
 	 */
-	public RNAPalindrome(int startPos, int endPos, boolean ended){
+	public RNAPalindrome(int startPos, int startMatch, boolean ended){
 		this.startPos = startPos;
-		this.endPos = endPos;
+		this.startMatch= startMatch;
 	}
 	public int getStartMatch(){
 		return startMatch;
@@ -51,7 +51,7 @@ public class RNAPalindrome {
 	}
 	
 	public void printPalin(){
-		System.out.print("(" + startPos + ", " + endPos + ")");
+		System.out.print("(" + startPos + ", " + startMatch + ")");
 	}
 	
 }

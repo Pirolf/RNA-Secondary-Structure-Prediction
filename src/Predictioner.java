@@ -1,11 +1,13 @@
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Scanner;
 
 
 public class Predictioner {
-
+	public static int absCurrChar = -1;
+	public static LinkedList<RNAPalindrome> rp = new LinkedList<RNAPalindrome>();
 	public static void main(String[] args) {
 		File rnaSeqFile = new File("src/ecoli16sRNA_J01695");
 		File rnaSecStructFile = new File("src/ecoli16sRNA_J01695_bracket");
@@ -18,49 +20,52 @@ public class Predictioner {
 			sbracket = new Scanner(rnaSecStructFile);
 			if(s.hasNextLine()){
 				rnaSeq = s.nextLine();
-				System.out.println(rnaSeq.length());
-				//run prediction
-				RNASeqInstance seqInstance = new RNASeqInstance(rnaSeq.length(), rnaSeq);
-				seqInstance.findPredResult();
-				seqInstance.printAllSecStruct();
-				
-				
-				
 				while(sbracket.hasNextLine()){
 					bracketStr += sbracket.nextLine();
 				}
-			
-				bracketStr = "((((....))).(..)).(.)";
-
-				LinkedList<RNAPalindrome> palinsOfBracket = new LinkedList<RNAPalindrome>();
-				RNAPalindrome p1 = new RNAPalindrome(1, 8, true);
-				RNAPalindrome p2 = new RNAPalindrome(2, 7, true);
-				RNAPalindrome p3 = new RNAPalindrome(10, 13, true);
-				RNAPalindrome p5 = new RNAPalindrome(15, 18, true);
-				RNAPalindrome p4 = new RNAPalindrome(0, 14, true);
-				RNAPalindrome p6 = new RNAPalindrome(3, 6, true);
-				RNAPalindrome p7 = new RNAPalindrome(20, 22, true);
-				palinsOfBracket.add(p7);	
-				palinsOfBracket.add(p6);
-				palinsOfBracket.add(p4);
-				palinsOfBracket.add(p1);
-				palinsOfBracket.add(p5);
-				palinsOfBracket.add(p3);
-				palinsOfBracket.add(p2);						
+				//run prediction
 				
-				//palinsOfBracket.add(p3);
-				LinkedList<RNAPalindrome> rp = findStemLoops(palinsOfBracket);
-				/*
-				for(int i = 0; i < palinsOfBracket.size(); i++){
-					System.out.print(" ");
-					palinsOfBracket.get(i).printPalin();
-				}*/
-				for(int i = 0; i < rp.size(); i++){
-					System.out.print(" ");
-					rp.get(i).printPalin();
+				RNASeqInstance seqInstance = new RNASeqInstance(rnaSeq.length(), rnaSeq);
+				seqInstance.findPredResult();
+				seqInstance.printAllSecStruct();
+
+				 
+
+				
+				//translate brackets
+				
+				findAllPairs(-1, bracketStr);
+				Iterator<RNAPalindrome> itr = rp.iterator();
+				LinkedList<RNAPalindrome> pairs = new LinkedList<RNAPalindrome>();
+				while(itr.hasNext()){
+
+					RNAPalindrome currBasePair = itr.next();
+
+					int start = currBasePair.getStartPos();
+					int startMatch = currBasePair.getStartMatch();
+					if(bracketStr.charAt(start) != '.' && bracketStr.charAt(startMatch) != '(' && bracketStr.charAt(startMatch) != '.'){
+						int numLparen = 0; int numRparen = 0;
+						String currStr = bracketStr.substring(start, startMatch + 1);
+						for(int i = 0; i < currStr.length(); i++){
+							if(currStr.charAt(i) == '('){
+								numLparen ++;
+							}else if(currStr.charAt(i) == ')'){
+								numRparen ++;
+							}
+						}
+						if(numLparen == numRparen){
+							pairs.add(currBasePair);
+							//System.out.println("(" + start + ", " + startMatch + "):" + bracketStr.substring(start, startMatch + 1));	
+						}
+						
+					}
 				}
-				
-
+				System.out.println("stemloops:");
+				LinkedList<RNAPalindrome> sll = findStemLoops(pairs);
+				for(int i = 0; i < sll.size(); i++){
+					sll.get(i).printPalin();
+					System.out.println();
+				}
 			}
 		}catch(IOException e){
 			System.out.println(e.getMessage());
@@ -71,84 +76,107 @@ public class Predictioner {
 
 
 	}
-	/**
-	 * TODO: have issues here
-	 * Convert secondary structures from bracket to RNAPalin
-	 * Duplicate stems are also produced,
-	 * we can remove duplicates afterwards (eg. merge (4, 8) and (3, 11) by using distance)
-	 * @param bracket
-	 * @param startSub: starting left paren's position in original string
-	 * @param posOffset:  position of this char in the original sequence
-	 * @return
-	 */
-	//public static int posOffset = 0; 
-	//public static int endPos;
-	public static LinkedList<RNAPalindrome> bracketToPalin(LinkedList<RNAPalindrome> rp,
-			String originalBracket, String bracket,
-			int startSub, int posOffset){
-		char currChar = bracket.charAt(0);
-		System.out.print("currChar: " + currChar);
-		System.out.print(posOffset + ", ");
-		if(currChar == '('){
-			System.out.print("lparen, ");
-			startSub = posOffset;//start from current position of (
-			posOffset ++;
-			currChar = bracket.charAt(0);
-			bracketToPalin(rp, originalBracket, bracket.substring(1), startSub, posOffset);	
-			
-			 //endPos =  posOffset;
-			
-		}else if(currChar == '.'){
-			System.out.print("dot, ");
-			posOffset ++;
-			//startSub = posOffset;
-			bracketToPalin(rp, originalBracket, bracket.substring(1), startSub, posOffset);
-		}else if (currChar ==')'){
-		// ')'  ......((...(((....))).....))... 
-		//calc positions, and add palindrome to the list
-			System.out.print("rparen, ");
-		int endPos =  posOffset;
-		posOffset++;
-		rp.add(new RNAPalindrome(startSub, endPos, true));
-		boolean currIsRParen = true;
-		int currPos = posOffset;
-		while(currIsRParen){
-			if(originalBracket.charAt(currPos) == ')'){
-				rp.add(new RNAPalindrome(startSub-1, endPos+1, true));
-				startSub--; endPos++;
-			}else{
-				currIsRParen = false;
-			}
-			currPos++;
+
+	public static char getOppositeParen(char p){
+		if(p == '('){
+			return ')';
 		}
-		//return rp;
+		if(p == ')'){
+			return '(';
 		}
-		return rp;
+		return p;
+
 	}
+	public static void findAllPairs(int absLparenPos, String subseq){
+
+		absCurrChar = findMatchingBasePairs(absLparenPos, subseq);
+		//System.out.println("currPos: " + currPos);
+		while(absCurrChar < subseq.length() - 1){
+			//System.out.println("currPos: " + currPos);
+			absCurrChar = findMatchingBasePairs(absCurrChar, subseq.substring(absCurrChar + 1));
+		}
+
+	}
+	public static boolean isLeftPart = true;
+	public static int findMatchingBasePairs(int absLparenPos, String subseq){
+		char firstChar = subseq.charAt(0);
+		if (firstChar == '.'){
+			if(isLeftPart){
+				absCurrChar ++;
+				//proceed
+				int matchingRparen = findMatchingBasePairs(absLparenPos + 1, subseq.substring(1));
+				RNAPalindrome basePair = new RNAPalindrome(absLparenPos + 1, matchingRparen, true);
+				rp.add(basePair);
+				return matchingRparen;
+			}else{
+				int i = 0;
+				absCurrChar ++;
+				char c = '.';
+				while(i < subseq.length() && c == '.'){
+					c = subseq.charAt(i);
+					absCurrChar ++;
+					i++;
+				}
+				if(c == ')'){
+					isLeftPart = false;		
+
+				}else if(c == '('){
+					isLeftPart = true;
+
+				}
+				if(isLeftPart){
+					//return findMatchingBasePairs(absLparenPos + 1, subseq.substring(1));
+					return absCurrChar + i;
+				}else{
+					return absCurrChar + i;
+				}
+
+
+			}
+
+		}else if(firstChar == '('){
+			absCurrChar ++;
+			//call resursively
+			int matchingRparen = findMatchingBasePairs(absLparenPos + 1, subseq.substring(1));
+			//add to list
+			//System.out.println(matchingRparen);
+			RNAPalindrome basePair = new RNAPalindrome(absLparenPos + 1, matchingRparen, true);
+			rp.add(basePair);
+			isLeftPart = true;
+		}
+		isLeftPart = false;
+		absCurrChar ++;
+
+		return absCurrChar;
+		//return rparen's absolute position
+
+
+	}
+
 
 	// ((.(((....)))..(....)....)...)
 	// (((...))..)
-	public static LinkedList<RNAPalindrome> markParensWithMultipleChildren(LinkedList<RNAPalindrome> rp){
-		for(int i = 0; i < rp.size(); i++){
-			RNAPalindrome curr1 = rp.get(i);
+	public static LinkedList<RNAPalindrome> markParensWithMultipleChildren(LinkedList<RNAPalindrome> r){
+		for(int i = 0; i < r.size(); i++){
+			RNAPalindrome curr1 = r.get(i);
 			int start1 = curr1.getStartPos();
-			int end1 = curr1.getEndPos();
+			int end1 = curr1.getStartMatch();
 			int children = 0;
 			int endOfLastChild = 0;
 			int startOfLastChild = end1;
-			for(int j = 0; j < rp.size() && children < 2; j++){
+			for(int j = 0; j < r.size() && children < 2; j++){
 				if(j!=i){
-					RNAPalindrome curr2 = rp.get(j);
-					
+					RNAPalindrome curr2 = r.get(j);
+
 					int start2 = curr2.getStartPos();
-					int end2 = curr2.getEndPos();
-					System.out.println("start2, end2 " + start2 + ","+ end2 + "; start1, end1 " + start1 + ", " + end1);
+					int end2 = curr2.getStartMatch();
+				//	System.out.println("start2, end2 " + start2 + ","+ end2 + "; start1, end1 " + start1 + ", " + end1);
 					if(start2 > start1 && end2 < end1){
 						//curr2.setBelongsToStemLoop(false);
 						if(start2 > endOfLastChild || end2 < startOfLastChild){
 							children ++;
-							System.out.println("endOfLastChild: " + end2+ ", startOfLastChild: " + start2);
-							System.out.println("children of (" + start1 + ", " + end1 + "): " + children);
+						//	System.out.println("endOfLastChild: " + end2+ ", startOfLastChild: " + start2);
+						//	System.out.println("children of (" + start1 + ", " + end1 + "): " + children);
 							endOfLastChild = end2;
 							startOfLastChild = start2;	
 						}
@@ -157,26 +185,26 @@ public class Predictioner {
 			}
 			if(children >= 2){
 				curr1.setBelongsToStemLoop(false);
-				System.out.println("(" + start1 + ", " + end1 + "): belongsToStemLoop: " + curr1.getBelongsToStemLoop());
+				//System.out.println("(" + start1 + ", " + end1 + "): belongsToStemLoop: " + curr1.getBelongsToStemLoop());
 			}		
 		}
-		return rp;	
+		return r;	
 	}
-	public static LinkedList<RNAPalindrome> findStemLoops(LinkedList<RNAPalindrome> rp){
-		rp = markParensWithMultipleChildren(rp);
-		RNAPalindrome[] stemLoops = new RNAPalindrome[rp.size()];//(RNAPalindrome[])(rp.toArray());
+	public static LinkedList<RNAPalindrome> findStemLoops(LinkedList<RNAPalindrome> r){
+		r = markParensWithMultipleChildren(r);
+		RNAPalindrome[] stemLoops = new RNAPalindrome[r.size()];//(RNAPalindrome[])(rp.toArray());
 		for(int i = 0; i < stemLoops.length; i++){
-			stemLoops[i] = rp.get(i);
+			stemLoops[i] = r.get(i);
 		}
-		for(int i = 0; i < rp.size(); i++){
-			RNAPalindrome curr1 = rp.get(i);
+		for(int i = 0; i < r.size(); i++){
+			RNAPalindrome curr1 = r.get(i);
 			if(curr1.getBelongsToStemLoop()){
 				int minStart = curr1.getStartPos();
-				int maxEnd = curr1.getEndPos();
-				for(int j = 0; j < rp.size(); j++){
-					RNAPalindrome curr2 = rp.get(j);
+				int maxEnd = curr1.getStartMatch();
+				for(int j = 0; j < r.size(); j++){
+					RNAPalindrome curr2 = r.get(j);
 					int currStart2 = curr2.getStartPos();
-					int currEnd2 = curr2.getEndPos();
+					int currEnd2 = curr2.getStartMatch();
 					if(curr2.getBelongsToStemLoop()){
 						if(currStart2 > minStart && currEnd2 < maxEnd){
 							//i enloses j
@@ -187,7 +215,7 @@ public class Predictioner {
 							stemLoops[i] = null;
 							//so that we can continue to remove any parens within i even if it's not a stem loop
 							minStart = curr2.getStartPos();
-							maxEnd = curr2.getEndPos();
+							maxEnd = curr2.getStartPos();
 						}						
 					}
 				}//end inner for
@@ -197,7 +225,7 @@ public class Predictioner {
 		for(int i = 0; i < stemLoops.length; i++){
 			if(stemLoops[i] != null){
 				if(stemLoops[i].getBelongsToStemLoop())
-				stemLoopList.add(stemLoops[i]);
+					stemLoopList.add(stemLoops[i]);
 			}
 		}
 		return stemLoopList;
