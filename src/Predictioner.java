@@ -10,7 +10,9 @@ public class Predictioner {
 	public static LinkedList<RNAPalindrome> rp = new LinkedList<RNAPalindrome>();
 	public static void main(String[] args) {
 		File rnaSeqFile = new File("src/ecoli16sRNA_J01695");
-		File rnaSecStructFile = new File("src/ecoli16sRNA_J01695_bracket");
+		//File rnaSecStructFile = new File("src/ecoli16sRNA_J01695_bracket");
+		File rnaSecStructFile = new File("src/d.16.b.A.globiformis");
+		//File rnaSecStructFile = new File("src/d.16.b.B.subtilis");
 		Scanner s = null;
 		Scanner sbracket = null;
 		try{
@@ -28,7 +30,7 @@ public class Predictioner {
 				RNASeqInstance seqInstance = new RNASeqInstance(rnaSeq.length(), rnaSeq);
 				seqInstance.findPredResult();
 				seqInstance.printAllSecStruct();
-
+			
 				 
 
 				

@@ -89,6 +89,48 @@ public class RNASeqInstance {
 		default:return 'A';
 		}
 	}
+	/**
+	 * For heurisitic functions for G-U pairs, with probability of 0.05 being G-U
+	 * @param c
+	 * @param heuristicNum
+	 * @return
+	 */
+	public static char getOpposite(char c, int heuristicNum){
+		double probGU = Math.random();
+		if(c == 'A'){
+			return 'U';
+		}
+		if(c == 'U'){
+			return 'A';
+		}
+		if(probGU > 0.95){
+			if(c == 'G'){return 'U';}
+			if(c == 'U'){return 'G';}
+		}
+		if(c == 'G'){return 'C';}
+
+		return 'G';
+
+	}
+	
+	public static char getOpposite(char c, int heuristicNum, int dist){
+		int distLimit = 50;
+		double probGU = Math.random();
+		if(c == 'A'){
+			return 'U';
+		}
+		if(c == 'U'){
+			return 'A';
+		}
+		if(probGU > 0.95 && dist < distLimit){
+			if(c == 'G'){return 'U';}
+			if(c == 'U'){return 'G';}
+		}
+		if(c == 'G'){return 'C';}
+
+		return 'G';
+
+	}
 
 	public void findPredResult(){
 		for(int i = 0; i < predMatrix.length; i++){
