@@ -134,21 +134,30 @@ public class RNASeqInstance {
 
 	public void findPredResult(){
 		for(int i = 0; i < predMatrix.length; i++){
-			for(int j = 0; j < predMatrix.length - i - 1; j++){
+			int maxBP = 0;
+			int startOfMaxBP = 0;
+			int endOfMaxBP = 0;
+			for(int j = predMatrix.length - i - 1 - 1; j >= 0; j--){
+			//for(int j = 0; j < predMatrix.length - i - 1; j++){
 				BaseCell currCell = predMatrix[i][j];
-				if(currCell == null){
-					System.out.println("currCell at "+ i + ", " + j + " is null");
-				}
 				if(currCell != null){
-					//System.out.println("currCell at "+ i + ", " + j + " is not null");
 					if(currCell.getTail() != null){
 						int start = currCell.getCol();
 						int end = predMatrix.length - 1 - currCell.getRow();
-						RNAPalindrome secStruct = new RNAPalindrome(start, end);
-						palinSeq.add(secStruct);
+						int numBP = Math.abs(currCell.getCol()-currCell.getTail().getCol()) + 1;
+						if(numBP > maxBP){
+							maxBP = numBP;
+							startOfMaxBP = start;
+							endOfMaxBP = end;
+						}
+						
 					}
 				}
 
+			}//end of inner for
+			if(maxBP != 0){
+				RNAPalindrome secStruct = new RNAPalindrome(startOfMaxBP, endOfMaxBP, maxBP);
+				palinSeq.add(secStruct);
 			}
 		}
 	}
@@ -160,7 +169,7 @@ public class RNASeqInstance {
 			int start = currPalin.getStartPos();
 			int end = currPalin.getStartMatch();
 			counter ++;
-			System.out.println("(" + start + ", " + end + ")" + ": " + seq.substring(start, end + 1));
+			System.out.println("(" + start + ", " + end + ")" + ": "  + currPalin.getBasePairs() + ", "+ seq.substring(start, end + 1));
 
 		}
 		System.out.println("Total predicted secondary structures: " + palinSeq.size());

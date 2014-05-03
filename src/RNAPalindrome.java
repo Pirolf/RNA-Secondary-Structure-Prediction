@@ -7,12 +7,14 @@ public class RNAPalindrome {
 	private int startMatch;
 	private int tmpEndPos;
 	private int endPos;
+	private int numBasePairs = 0;
 	private boolean belongsToStemLoop = true;
-	public RNAPalindrome(int startPos, int startMatch){
+	public RNAPalindrome(int startPos, int startMatch, int numBasePairs){
 		this.startPos = startPos;
 		this.startMatch = startMatch;
 		this.tmpEndPos = startMatch;
 		this.endPos = 0;
+		this.numBasePairs = numBasePairs;
 	}
 	/**
 	 * for the bracket file
@@ -23,6 +25,9 @@ public class RNAPalindrome {
 	public RNAPalindrome(int startPos, int startMatch, boolean ended){
 		this.startPos = startPos;
 		this.startMatch= startMatch;
+	}
+	public int getBasePairs(){
+		return numBasePairs;
 	}
 	public int getStartMatch(){
 		return startMatch;
