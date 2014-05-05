@@ -2,7 +2,6 @@
 public class RNAPalindrome {
 	//... (C           G            G)    ...      (C        C        G)...
 	//....startPos    tmpEndPos   endPos        endMatch          startMatch
-	//HASH: startPos, startMatch
 	private int startPos;
 	private int startMatch;
 	private int tmpEndPos;

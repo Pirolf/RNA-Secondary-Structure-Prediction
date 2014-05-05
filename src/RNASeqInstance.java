@@ -137,6 +137,7 @@ public class RNASeqInstance {
 			int maxBP = 0;
 			int startOfMaxBP = 0;
 			int endOfMaxBP = 0;
+			//Be greedy, we only accept secondary structures with the max base pairs
 			for(int j = predMatrix.length - i - 1 - 1; j >= 0; j--){
 			//for(int j = 0; j < predMatrix.length - i - 1; j++){
 				BaseCell currCell = predMatrix[i][j];

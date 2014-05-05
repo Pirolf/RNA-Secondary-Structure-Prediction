@@ -25,17 +25,88 @@ public class Predictioner {
 				while(sbracket.hasNextLine()){
 					bracketStr += sbracket.nextLine();
 				}
-				//run prediction
+				//bracketStr = bracketStr.substring(366, 393);
+				//bracketStr = bracketStr.substring(404, 435);
+				//bracketStr = bracketStr.substring(135, 223);
+				bracketStr = "(((.(((......)))...(((....)))...(((......))).)))..";
+				//store substrings of a sec struct, each substring contains at most 1 stem loop
+				LinkedList<RNAPalindrome> subSecStruct = new LinkedList<RNAPalindrome>();
+				LinkedList<RNAPalindrome> stemLoops = new LinkedList<RNAPalindrome>();
+				int k = 0; 
+				int lastEnd = 0;
+				boolean rparenFound = false;
+				while(k < bracketStr.length()){
+				//for(int i = 0; i < bracketStr.length(); i++){
+					char currChar = bracketStr.charAt(k);
+					if(rparenFound){
+						if((currChar == '.' && lastEnd < bracketStr.length() - 1) || 
+								currChar == ')' && k == bracketStr.length() - 1){
+							RNAPalindrome sub = new RNAPalindrome(lastEnd+1, k, true);
+							lastEnd = k;
+							subSecStruct.add(sub);
+							rparenFound = false;
+						}
+					}else if(currChar == ')'){
+						rparenFound = true;
+					}
+					k++;				
+				}
+				for(int i = 0; i < subSecStruct.size(); i++){
+					subSecStruct.get(i).printPalin();
+					// (((.(((......))).
+					// find num of rparens
+					RNAPalindrome currPalin = subSecStruct.get(i);
+					String currPalinStr = bracketStr.substring(currPalin.getStartPos(),
+							currPalin.getStartMatch() + 1);
+					int numRParens = 0;
+					int numLParens = -1; 
+					int firstLParen = 0;
+					int lastRParen = 0;
+					int j = currPalinStr.length() - 1;
+					while(j >= 0 && numLParens < numRParens){
+						char currToken = currPalinStr.charAt(j);
+						if(currToken == ')'){
+							if(lastRParen == 0){
+								lastRParen = j;
+							}
+							numRParens++;
+							numLParens ++;
+						}else if(currToken == '('){
+							numLParens ++;
+						}
+						j--;
+					}
+					if(numLParens == numRParens && numLParens > 0){
+						firstLParen = j;
+						int startPosInSecStruct = currPalin.getStartPos() + firstLParen - 1;
+						int endPosInSecStruct = currPalin.getStartPos() + lastRParen; 
+						//System.out.println(endPosInSecStruct);
+						System.out.println("(" + firstLParen + ", " + lastRParen + ")"
+						+ currPalinStr.substring(firstLParen - 1, lastRParen + 1));
+						RNAPalindrome currStemLoop =
+								new RNAPalindrome(startPosInSecStruct, endPosInSecStruct, true);
+						stemLoops.add(currStemLoop);
+					}
+				}
 				
+				System.out.println(bracketStr);
+				System.out.println("Stem Loops: ");
+				for(int i = 0; i < stemLoops.size(); i++){
+					RNAPalindrome currStemLoop = stemLoops.get(i);
+					currStemLoop.printPalin();
+					System.out.println(bracketStr.substring(currStemLoop.getStartPos(), currStemLoop.getStartMatch() + 1));
+				}
+				//run prediction
+				/*
 				RNASeqInstance seqInstance = new RNASeqInstance(rnaSeq.length(), rnaSeq);
 				seqInstance.findPredResult();
 				seqInstance.printAllSecStruct();
-			
+			*/
 				 
 
 				
 				//translate brackets
-				
+			/*	
 				findAllPairs(-1, bracketStr);
 				Iterator<RNAPalindrome> itr = rp.iterator();
 				LinkedList<RNAPalindrome> pairs = new LinkedList<RNAPalindrome>();
@@ -57,17 +128,19 @@ public class Predictioner {
 						}
 						if(numLparen == numRparen){
 							pairs.add(currBasePair);
-							//System.out.println("(" + start + ", " + startMatch + "):" + bracketStr.substring(start, startMatch + 1));	
+							System.out.println("(" + start + ", " + startMatch + "):" + bracketStr.substring(start, startMatch + 1));	
 						}
 						
 					}
 				}
 				System.out.println("stemloops:");
-				LinkedList<RNAPalindrome> sll = findStemLoops(pairs);
+				
+				LinkedList<RNAPalindrome> sll = findStemLoops(subSecStruct);
 				for(int i = 0; i < sll.size(); i++){
 					sll.get(i).printPalin();
 					System.out.println();
 				}
+				*/
 			}
 		}catch(IOException e){
 			System.out.println(e.getMessage());
@@ -233,6 +306,6 @@ public class Predictioner {
 		return stemLoopList;
 	}
 
-
+	
 
 }
