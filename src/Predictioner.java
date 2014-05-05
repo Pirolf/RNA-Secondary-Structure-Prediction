@@ -29,6 +29,7 @@ public class Predictioner {
 				//bracketStr = bracketStr.substring(404, 435);
 				//bracketStr = bracketStr.substring(135, 223);
 				bracketStr = "(((.(((......)))...(((....)))...(((......))).)))..";
+				bracketStr = "(((.(((......)))...(((....))).(((......))))))..";
 				//store substrings of a sec struct, each substring contains at most 1 stem loop
 				LinkedList<RNAPalindrome> subSecStruct = new LinkedList<RNAPalindrome>();
 				LinkedList<RNAPalindrome> stemLoops = new LinkedList<RNAPalindrome>();
@@ -36,10 +37,9 @@ public class Predictioner {
 				int lastEnd = 0;
 				boolean rparenFound = false;
 				while(k < bracketStr.length()){
-				//for(int i = 0; i < bracketStr.length(); i++){
 					char currChar = bracketStr.charAt(k);
 					if(rparenFound){
-						if((currChar == '.' && lastEnd < bracketStr.length() - 1) || 
+						if((currChar == '.'&& lastEnd < bracketStr.length() - 1) || 
 								currChar == ')' && k == bracketStr.length() - 1){
 							RNAPalindrome sub = new RNAPalindrome(lastEnd+1, k, true);
 							lastEnd = k;
@@ -58,35 +58,81 @@ public class Predictioner {
 					RNAPalindrome currPalin = subSecStruct.get(i);
 					String currPalinStr = bracketStr.substring(currPalin.getStartPos(),
 							currPalin.getStartMatch() + 1);
-					int numRParens = 0;
-					int numLParens = -1; 
+					
+					//check if numLParens >= numRParens or <
+					int totalLParens = 0; int totalRParens = 0;
+					for(int m = 0; m < currPalinStr.length(); m++){
+						char currChar = currPalinStr.charAt(m);
+						if(currChar == '('){
+							totalLParens ++;
+						}else if(currChar == ')'){
+							totalRParens ++;
+						}
+					}
+					int numRParens = -1;
+					int numLParens = 0; 
 					int firstLParen = 0;
 					int lastRParen = 0;
-					int j = currPalinStr.length() - 1;
-					while(j >= 0 && numLParens < numRParens){
-						char currToken = currPalinStr.charAt(j);
-						if(currToken == ')'){
-							if(lastRParen == 0){
-								lastRParen = j;
+					if(totalLParens >= totalRParens){
+						numRParens = 0;
+						numLParens = -1; 
+						int j = currPalinStr.length() - 1;
+						while(j >= 0 && numLParens < numRParens){
+							char currToken = currPalinStr.charAt(j);
+							if(currToken == ')'){
+								if(lastRParen == 0){
+									lastRParen = j;
+								}
+								numRParens++;
+								numLParens ++;
+							}else if(currToken == '('){
+								numLParens ++;
 							}
-							numRParens++;
-							numLParens ++;
-						}else if(currToken == '('){
-							numLParens ++;
+							j--;
 						}
-						j--;
+						if(numLParens == numRParens && numLParens > 0){
+							firstLParen = j;
+							int startPosInSecStruct = currPalin.getStartPos() + firstLParen - 1;
+							int endPosInSecStruct = currPalin.getStartPos() + lastRParen; 
+							//System.out.println(endPosInSecStruct);
+							System.out.println("(" + firstLParen + ", " + lastRParen + ")"
+							+ currPalinStr.substring(firstLParen - 1, lastRParen + 1));
+							RNAPalindrome currStemLoop =
+									new RNAPalindrome(startPosInSecStruct, endPosInSecStruct, true);
+							stemLoops.add(currStemLoop);
+						}
+					}else{
+						//if num of rparens > lparens, read from left
+						numRParens = -1;
+						numLParens = 0; 
+						int j = 0;
+						while(j < currPalinStr.length() && numLParens > numRParens){
+							char currToken = currPalinStr.charAt(j);
+							if(currToken == '('){
+								if(firstLParen == 0){
+									firstLParen = j;
+								}
+								numRParens++;
+								numLParens ++;
+							}else if(currToken == ')'){
+								numRParens ++;
+							}
+							j++;
+						}
+						if(numLParens == numRParens && numLParens > 0){
+							lastRParen = j;
+							int startPosInSecStruct = currPalin.getStartPos() + firstLParen - 1;
+							int endPosInSecStruct = currPalin.getStartPos() + lastRParen + 1; 
+							//System.out.println(endPosInSecStruct);
+							System.out.println("(" + firstLParen + ", " + lastRParen + ")"
+							+ currPalinStr.substring(firstLParen - 1, lastRParen + 1));
+							RNAPalindrome currStemLoop =
+									new RNAPalindrome(startPosInSecStruct, endPosInSecStruct, true);
+							stemLoops.add(currStemLoop);
+						}
 					}
-					if(numLParens == numRParens && numLParens > 0){
-						firstLParen = j;
-						int startPosInSecStruct = currPalin.getStartPos() + firstLParen - 1;
-						int endPosInSecStruct = currPalin.getStartPos() + lastRParen; 
-						//System.out.println(endPosInSecStruct);
-						System.out.println("(" + firstLParen + ", " + lastRParen + ")"
-						+ currPalinStr.substring(firstLParen - 1, lastRParen + 1));
-						RNAPalindrome currStemLoop =
-								new RNAPalindrome(startPosInSecStruct, endPosInSecStruct, true);
-						stemLoops.add(currStemLoop);
-					}
+					
+					
 				}
 				
 				System.out.println(bracketStr);
