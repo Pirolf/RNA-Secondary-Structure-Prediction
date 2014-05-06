@@ -4,15 +4,15 @@ public class RNAPalindrome {
 	//....startPos    tmpEndPos   endPos        endMatch          startMatch
 	private int startPos;
 	private int startMatch;
-	private int tmpEndPos;
-	private int endPos;
+	//private int tmpEndPos;
+	//private int endPos;
 	private int numBasePairs = 0;
-	private boolean belongsToStemLoop = true;
+	//private boolean belongsToStemLoop = true;
 	public RNAPalindrome(int startPos, int startMatch, int numBasePairs){
 		this.startPos = startPos;
 		this.startMatch = startMatch;
-		this.tmpEndPos = startMatch;
-		this.endPos = 0;
+		//this.tmpEndPos = startMatch;
+		//this.endPos = 0;
 		this.numBasePairs = numBasePairs;
 	}
 	/**
@@ -31,6 +31,7 @@ public class RNAPalindrome {
 	public int getStartMatch(){
 		return startMatch;
 	}
+	/*
 	public void setTmpEndPos(int tmp){
 		this.tmpEndPos = tmp;
 	}
@@ -43,13 +44,16 @@ public class RNAPalindrome {
 	public int getTmpEndPos(){
 		return this.tmpEndPos;
 	}
+	*/
 	public void setEnds(int startPos, int startMatch){
 		this.startPos = startPos;
 		this.startMatch = startMatch;
 	}
+	/*
 	public int getEndPos(){
 		return this.endPos;
 	}
+	*/
 	public int getStartPos(){
 		return this.startPos;
 	}

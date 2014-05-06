@@ -28,7 +28,7 @@ public class Predictioner {
 				//bracketStr = bracketStr.substring(135, 223);
 				//bracketStr = "((...((((..))))....))";
 				//bracketStr = "(((.(((......)))...(((....)))...(((......))).)))..";
-				bracketStr = "(((.(((...)))...((((.((..)).)))).(((.((...((.(...)..)).))..(..(((...))).).))))))..";
+				bracketStr = "(((.(((...)))...((((.((..)).)))).(((.((...((.(...)..)).))..(..(((...)))...((...))..).))))))..";
 				//store substrings of a sec struct, each substring contains at most 1 stem loop
 				LinkedList<RNAPalindrome> subSecStruct = new LinkedList<RNAPalindrome>();
 
@@ -47,11 +47,11 @@ public class Predictioner {
 
 
 				//run prediction
-				/*
+				
 				RNASeqInstance seqInstance = new RNASeqInstance(rnaSeq.length(), rnaSeq);
 				seqInstance.findPredResult();
 				seqInstance.printAllSecStruct();
-				 */
+				 
 			}
 		}catch(IOException e){
 			System.out.println(e.getMessage());
