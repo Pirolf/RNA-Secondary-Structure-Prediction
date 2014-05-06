@@ -1,7 +1,5 @@
-/ecoli16sRNA_J01695
-/ecoli16sRNA_J01695_bracket
-/samplefiles
-/Predictioner.class
-/BaseCell.class
 /d.16.b.A.globiformis
-/d.16.b.B.subtilis
+/BaseCell.class
+/Predictioner.class
+/RNAPalindrome.class
+/RNASeqInstance.class
