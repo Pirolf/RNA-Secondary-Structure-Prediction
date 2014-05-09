@@ -26,7 +26,7 @@ public class RNASeqInstance {
 		for(int i= 0; i < predMatrix.length - 1; i++){
 			for(int j = 0; j < predMatrix.length - i - 1; j++){
 				BaseCell currBaseCell = predMatrix[i][j];
-				if(getOpposite(revSeq.charAt(i)) == seq.charAt(j)){
+				if(getOpposite(revSeq.charAt(i), 1, 50) == seq.charAt(j)){
 					(predMatrix[i][j]).setHead();
 					if(i >= 1 && j >= 1){
 						BaseCell leftTop = predMatrix[i-1][j-1];

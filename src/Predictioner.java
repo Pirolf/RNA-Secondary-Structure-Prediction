@@ -8,9 +8,9 @@ import java.util.Scanner;
 public class Predictioner {
 	public static void main(String[] args) {
 		File rnaSeqFile = new File("src/ecoli16sRNA_J01695");
-		File rnaSecStructFile = new File("src/ecoli16sRNA_J01695_bracket");
+		//File rnaSecStructFile = new File("src/ecoli16sRNA_J01695_bracket");
 		//File rnaSecStructFile = new File("src/d.16.b.A.globiformis");
-		//File rnaSecStructFile = new File("src/d.16.b.B.subtilis");
+		File rnaSecStructFile = new File("src/d.16.b.B.subtilis");
 		Scanner s = null;
 		Scanner sbracket = null;
 		try{
@@ -28,7 +28,7 @@ public class Predictioner {
 				//bracketStr = bracketStr.substring(135, 223);
 				//bracketStr = "((...((((..))))....))";
 				//bracketStr = "(((.(((......)))...(((....)))...(((......))).)))..";
-				bracketStr = "(((.(((...)))...((((.((..)).)))).(((.((...((.(...)..)).))..(..(((...)))...((...))..).))))))..";
+				//bracketStr = "(((.(((...)))...((((.((..)).)))).(((.((...((.(...)..)).))..(..(((...)))...((...)).).))))))..";
 				//store substrings of a sec struct, each substring contains at most 1 stem loop
 				LinkedList<RNAPalindrome> subSecStruct = new LinkedList<RNAPalindrome>();
 
@@ -47,10 +47,12 @@ public class Predictioner {
 
 
 				//run prediction
-				
+				/*
 				RNASeqInstance seqInstance = new RNASeqInstance(rnaSeq.length(), rnaSeq);
 				seqInstance.findPredResult();
 				seqInstance.printAllSecStruct();
+				*/
+				
 				 
 			}
 		}catch(IOException e){
